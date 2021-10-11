@@ -1,0 +1,24 @@
+* Instructions to initialize the project
+0. ~nix-shell nix/shell.nix~
+1. ~yarn init --yes && yarn install~ (init ~package.json~ and produce ~yarn.lock~ file)
+3. ~spago init --tag psc-0.14.4-20211005~
+4. ~generate-spago.sh~ every time ~spago.dhall~ is changed (this generates spago libraries nix derivations and moves those files to ~nix~ folder)
+
+** Or copy/paste this oneliner
+#+BEGIN_SRC sh
+nix-shell nix/shell.nix --run "yarn init --yes && yarn install && spago init --tag psc-0.14.4-20211005 && sh generate-spago.sh"
+#+END_SRC
+
+* Rename with your app's name (optional)
+5. Change project's name in ~nix/default.nix~ as well as ~systemd.services.my-app~ and ~virtualHosts."my-app"~ parts in ~nix/webserver.nix~
+6. In ~nix/aws.nix~ point the user of AWS (part ~accessKeyId = "identifier-of-keys"~). This reads the credentials from ~./ec2-keys~ file in your home directory.
+
+* Build and run
+1. ~cd nix~
+2. ~nix-build~
+3. ~result/my-app~
+
+* Build and deploy to EC2
+1. ~cd nix~
+2. ~nixops create aws.nix webserver.nix -d name-of-your-deployment~
+3. ~nixops deploy name-of-your-deployment~
